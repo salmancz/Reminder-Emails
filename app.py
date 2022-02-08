@@ -1,17 +1,47 @@
-# # -=-=- Developed By PyExpo Team10 -=-=- #
+# -=-=- Developed By PyExpo Team10 -=-=- #
 
-# # Importing package
+# Importing package
 import streamlit as st
 import smtplib, ssl
-import datetime as dt
-import time
+import random
+
+generated_otp = random.randint(3453, 9453)
+def sendEmail():
+    context = ssl.create_default_context()
+    with smtplib.SMTP(smtp_server, port) as email:
+        email.starttls(context = context)
+        email.login(bot_email, password)
+        email.sendmail(bot_email, reciever_email, main_message)
+
+
+def otp_checker():
+    context = ssl.create_default_context()
+    with smtplib.SMTP(smtp_server, port) as email:
+        email.starttls(context = context)
+        email.login(bot_email, password)
+        email.sendmail(bot_email, reciever_email, otp_message)
+        
 
 # Getting info from user and Front-End Section
 st.title("PyExpo Challenge")
 st.write("Conducting grand competition for programmers. Develop your skills by challenging and solving coding problems")
 st.write("We are starting soon signup for details")
-user_name = st.text_input("Enter your name :")
+st.subheader("Register")
+col1, col2 = st.columns(2)
+with col1:
+    user_name = st.text_input("Enter your first name :")
+with col2:
+    second_name= st.text_input("Enter your last name :")
 reciever_email = st.text_input("Email ID :")
+reciever_number = st.text_input("Phone Number :")
+clg_input = st.text_input("Enter your Institute : ")
+send_otp_btn = st.button("Send OTP")
+col3, col4 = st.columns(2)
+with col3:
+    input_otp = st.text_input("Enter OTP: ")
+with col4:
+    st.empty()
+check_box = st.checkbox("I have read and accept the Terms and Conditions")
 submit_button = st.button("Sign Up")
 
 
@@ -21,7 +51,19 @@ password = "salmanbotpass"
 port = 587
 smtp_server = "smtp.gmail.com"
 
-message = """\
+
+otp_message = """\
+Subject: PyExpo - Confirm Your Email Address
+
+Hey {}, Your otp is for regestering pyexpo is {}. 
+
+
+
+Happy Coding!
+    """.format(user_name, generated_otp)
+    
+
+main_message = """\
 Subject: PyExpo is about to start!
 
 Hey {},
@@ -34,17 +76,22 @@ for more quieries: https://salmandevee.web.app/
 
 Happy Coding!
     """.format(user_name)
+# db_list = []
+# db_list.append(user_name, reciever_email)
+# database = tuple()
+# database.append(db_list)
 
+# OTP Button Functionality
+if send_otp_btn:
+    otp_checker()
+    st.write(generated_otp)
+    st.success("OTP has sent!")
 
-# Button Functionality
+# Email Button Functionality
 if submit_button:
-    st.success("You have succesfully signed in")
-    # Email Functionality 
-    context = ssl.create_default_context()
-    with smtplib.SMTP(smtp_server, port) as email:
-        email.starttls(context = context)
-        email.login(bot_email, password)
-        send_time = dt.datetime(2022, 1, 5, 14, 43, 00)
-        x = time.sleep(send_time.timestamp() - time.time())
-        email.sendmail(bot_email, reciever_email, message)
-
+    if generated_otp == int(input_otp):
+        st.success("You have succesfully Signed In")
+    elif generated_otp != int(input_otp):
+        st.error("Can't register, OTP is incorrect")
+    else:
+        st.error("Check your credentials and try again")
